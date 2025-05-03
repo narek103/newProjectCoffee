@@ -1,0 +1,38 @@
+---
+title: "coffee"
+format: html
+
+---
+
+```{r}
+library(tidyverse)
+coffee <- read_csv("coffee.csv")
+print(colnames(coffee))
+```
+
+
+```{r setup, echo=FALSE, message=FALSE, warning=FALSE}
+colnames(coffee) <- c("Country", "CupsPerDay")
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+
+world_coffee <- left_join(world, coffee, by = c("name" = "Country"))
+```
+
+## **Карта кофе: Чашек в день**
+
+```{r map}
+ggplot(world_coffee) +
+  geom_sf(aes(fill = CupsPerDay)) +
+  scale_fill_gradient(name = "cups", low = "lightyellow", high = "blue", na.value = "grey90") +
+  theme_minimal() +
+  labs(title = "Карта потребления кофе по странам")
+```
+
+
+
+ <https://quarto.org/docs/websites>.

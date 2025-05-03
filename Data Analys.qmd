@@ -1,0 +1,105 @@
+---
+title: "Export"
+format: html
+editor: visual
+#|echo: false
+#|masage: false
+#|worning: false
+---
+
+```{}
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+```{r}
+
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+library(rnaturalearthdata)
+
+# Загрузим геоданные мира
+world <- ne_countries(scale = "medium", returnclass = "sf")
+
+# Импортируем данные
+coffee <- read_csv("coffee.csv", locale = locale(encoding = "UTF-8"))
+coffee_export <- read_csv("coffee_export.csv", locale = locale(encoding = "UTF-8"))
+
+# Объединяем
+world_coffee <- left_join(world, coffee, by = c("name" = "Country"))
+world_export <- left_join(world, coffee_export, by = c("name" = "Country"))
+
+## **Карта 2: Экспорт кофе**
+ggplot(world_export) +
+  geom_sf(aes(fill = CoffeeExport_Tons)) +
+  scale_fill_gradient(name = "Экспорт (тыс. тонн)", low = "lightblue", high = "darkgreen", na.value = "lightblue") +
+  theme_minimal() +
+  labs(title = "Экспорт кофе по странам")
+
+```
+
+```{r}
+
+coffee <- read_csv("coffee.csv", locale = locale(encoding = "UTF-8"))
+
+
+
+## **Карта 1: Чашек кофе в день**
+
+ggplot(world_coffee) +
+  geom_sf(aes(fill = CupsPerDay)) +
+  scale_fill_gradient(name = "cups", low = "lightyellow", high = "blue", na.value = "grey90") +
+  theme_minimal() +
+  labs(title = "Карта потребления кофе по странам")
+
+```
+
+```{r}
+
+library(tidyverse)
+library(plotly)
+
+# Ներմուծում տվյալների
+coffee2 <- read_csv("coffee2.csv")
+
+# Ստեղծում ggplot գրաֆիկը
+p <- ggplot(coffee2, aes(x = Year, y = MillionBags)) +
+  geom_area(fill = "#00CED1", alpha = 0.6) +             # Մենթա կանաչի երանգ
+  geom_line(color = "black", size = 1.2) +               # Սև գիծ
+  geom_point(color = "lightblue", size = 2) +            # Բաց կապույտ կետեր
+  theme_minimal() +
+  labs(
+    title = "KOFE (1825–2020)",
+    x = "TARI",
+    y = "OGTAGORCUM (mln tona)"
+  )
+
+# Փոխակերպում ինտերակտիվի
+ggplotly(p)
+
+
+
+  
+
+```
+
+```{r}
+library(tidyverse)
+library(treemap)
+
+data <- data.frame(
+  Category = c("AREA", "ashxatavarc", "hareker", "ekamut", "milk", 
+               "komunal", "objarka", "export anox", "transport", 
+               "vacharox", "achecnox","qaxox"),
+  Value = c(0.88, 0.63, 0.38, 0.25, 0.10, 0.18, 0.80, 0.02, 0.03, 0.04, 0.01, 0.0000001)
+)
+
+treemap(data,
+        index = "Category",
+        vSize = "Value",
+        palette = "Blues",
+        title = "Treemap of Dollar Values",
+        border.col = "white")
+
+```
